@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview An AI agent that suggests code snippets to help students write Python code.
+ * @fileOverview An AI agent that suggests code snippets to help young students (ages 6-12) write Python code for Penguin Python.
  *
  * - suggestCode - A function that handles the code suggestion process.
  * - SuggestCodeInput - The input type for the suggestCode function.
@@ -8,20 +8,16 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z}from 'genkit';
 
 const SuggestCodeInputSchema = z.object({
-  codeContext: z
-    .string()
-    .describe("The current code the user is working on.  This is important context for generating accurate code suggestions."),
-  programmingTask: z.string().describe('The programming task the student is trying to accomplish.'),
-  pythonVersion: z.string().describe('The version of python to use.'),
+  task: z.string().describe('The coding task or goal the student is trying to achieve (e.g., "draw a blue square", "make a penguin move").'),
 });
 export type SuggestCodeInput = z.infer<typeof SuggestCodeInputSchema>;
 
 const SuggestCodeOutputSchema = z.object({
-  suggestedCode: z.string().describe('A code snippet that helps the student accomplish their programming task.'),
-  explanation: z.string().describe('An explanation of the suggested code.'),
+  codeSnippet: z.string().describe('A very simple Python code snippet that helps achieve the task, suitable for kids ages 6-12, focusing on drawing or simple animations.'),
+  explanation: z.string().describe('A super child-friendly (ages 6-12) explanation of what the code does, using simple words, fun analogies, and encouragement. Explain how to run the code and see the result.'),
 });
 export type SuggestCodeOutput = z.infer<typeof SuggestCodeOutputSchema>;
 
@@ -30,26 +26,29 @@ export async function suggestCode(input: SuggestCodeInput): Promise<SuggestCodeO
 }
 
 const prompt = ai.definePrompt({
-  name: 'suggestCodePrompt',
+  name: 'codeSuggestionPromptPenguin',
   input: {schema: SuggestCodeInputSchema},
   output: {schema: SuggestCodeOutputSchema},
-  prompt: `You are a coding assistant helping a student write code.
+  prompt: `You are a friendly and helpful Penguin Pal, an AI coding assistant for kids (ages 6-12) learning Python! Your job is to give them super simple and fun Python code snippets that they can use to draw pictures or make things move.
 
-The student is working on the following task: {{{programmingTask}}}
+IMPORTANT:
+- Use very simple words and short sentences.
+- Be super encouraging! Tell them they're doing great!
+- Think like you're talking to a 7-year-old.
+- If the task involves drawing, use the 'turtle' library.
+- Make sure the code snippet is VERY short, maybe just 2-5 lines at most.
+- Explain what the code does in a fun way, like "This code tells the penguin to draw a line!"
+- Tell them how to run the code and see what happens!
+- Focus on tasks related to drawing or simple animations.
 
-The student has written the following code so far:
-\`\`\`python
-{{{codeContext}}}
-\`\`\`
+Coding Task: {{{task}}}
 
-Suggest a code snippet that helps the student accomplish their task. Explain the code snippet.
-
-Your code suggestions should work with Python version {{{pythonVersion}}}.  Pay attention to the correct indentation.`,
+Let's code something amazing! Waddle on!`,
 });
 
 const suggestCodeFlow = ai.defineFlow(
   {
-    name: 'suggestCodeFlow',
+    name: 'codeSuggestionFlowPenguin',
     inputSchema: SuggestCodeInputSchema,
     outputSchema: SuggestCodeOutputSchema,
   },

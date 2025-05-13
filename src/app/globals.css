@@ -4,78 +4,80 @@
 
 @layer base {
   :root {
-    --background: 197 71% 96%; /* Very light Sky Blue */
-    --foreground: 25 65% 20%; /* Dark Brick Orange/Brown */
+    /* Penguin Python Theme - Light Mode */
+    --background: 200 100% 96%; /* Very Light Sky Blue / Icy White */
+    --foreground: 220 40% 25%; /* Dark Slate Blue */
     --card: 0 0% 100%; /* White */
-    --card-foreground: 25 65% 20%;
+    --card-foreground: 220 40% 25%;
     --popover: 0 0% 100%;
-    --popover-foreground: 25 65% 20%;
-    --primary: 147 46% 47%; /* Earthy Green */
-    --primary-foreground: 147 46% 95%; /* Very light green/white */
-    --secondary: 45 100% 69%; /* Sunflower Yellow */
-    --secondary-foreground: 45 100% 20%; /* Dark Brown for text on yellow */
-    --muted: 197 71% 90%; /* Lighter Sky Blue */
-    --muted-foreground: 197 71% 45%; /* Muted Sky Blue text */
-    --accent: 146 50% 36%; /* Sea Green */
-    --accent-foreground: 146 50% 95%; /* Very light green/white */
+    --popover-foreground: 220 40% 25%;
+    --primary: 210 100% 50%; /* Bright Blue - Penguin Body */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 30 100% 55%; /* Bright Orange - Penguin Beak/Feet */
+    --secondary-foreground: 220 40% 20%; /* Dark Slate Blue on Orange */
+    --muted: 200 100% 90%; /* Light Sky Blue */
+    --muted-foreground: 200 50% 50%; /* Muted Sky Blue Text */
+    --accent: 50 100% 60%; /* Sunny Yellow */
+    --accent-foreground: 220 40% 25%; /* Dark Slate Blue on Yellow */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 147 46% 80%; /* Light Earthy Green border */
-    --input: 197 71% 90%; /* Lighter Sky Blue for input background */
-    --ring: 146 50% 36%; /* Sea Green for focus ring */
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --border: 210 100% 80%; /* Light version of primary blue */
+    --input: 200 100% 92%; /* Very light blue for input background */
+    --ring: 30 100% 55%; /* Orange for focus ring */
+    --chart-1: 210 90% 55%;
+    --chart-2: 30 90% 60%;
+    --chart-3: 50 90% 65%;
+    --chart-4: 190 80% 50%;
+    --chart-5: 230 80% 60%;
+    --radius: 0.8rem; /* Slightly larger radius for kid-friendly feel */
 
     /* Sidebar theme (light) */
-    --sidebar-background: 197 71% 92%;
-    --sidebar-foreground: 25 65% 20%;
-    --sidebar-primary: 147 46% 47%;
-    --sidebar-primary-foreground: 147 46% 95%;
-    --sidebar-accent: 146 50% 36%;
-    --sidebar-accent-foreground: 146 50% 95%;
-    --sidebar-border: 147 46% 75%;
-    --sidebar-ring: 146 50% 36%;
+    --sidebar-background: 200 100% 92%; /* Slightly darker light blue */
+    --sidebar-foreground: 220 40% 25%;
+    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 50 100% 60%;
+    --sidebar-accent-foreground: 220 40% 25%;
+    --sidebar-border: 210 100% 75%;
+    --sidebar-ring: 30 100% 55%;
   }
 
   .dark {
-    --background: 25 30% 10%; /* Very dark brown/orange */
-    --foreground: 197 71% 85%; /* Light Sky Blue text */
-    --card: 25 30% 15%;
-    --card-foreground: 197 71% 85%;
-    --popover: 25 30% 15%;
-    --popover-foreground: 197 71% 85%;
-    --primary: 147 46% 55%; /* Lighter Earthy Green */
-    --primary-foreground: 147 46% 10%; /* Dark green for text on primary */
-    --secondary: 45 100% 55%; /* Darker Sunflower Yellow */
-    --secondary-foreground: 45 100% 10%; /* Very dark brown for text on yellow */
-    --muted: 25 30% 20%;
-    --muted-foreground: 197 71% 60%;
-    --accent: 146 50% 45%; /* Lighter Sea Green */
-    --accent-foreground: 146 50% 5%; /* Very dark green/black */
+    /* Penguin Python Theme - Dark Mode */
+    --background: 220 40% 10%; /* Very Dark Blue */
+    --foreground: 200 100% 85%; /* Light Sky Blue text */
+    --card: 220 40% 15%;
+    --card-foreground: 200 100% 85%;
+    --popover: 220 40% 15%;
+    --popover-foreground: 200 100% 85%;
+    --primary: 210 100% 60%; /* Brighter Blue */
+    --primary-foreground: 220 40% 10%; /* Dark blue for text on primary */
+    --secondary: 30 100% 60%; /* Brighter Orange */
+    --secondary-foreground: 220 40% 10%; /* Very dark blue for text on orange */
+    --muted: 220 40% 20%;
+    --muted-foreground: 200 100% 60%;
+    --accent: 50 100% 65%; /* Brighter Yellow */
+    --accent-foreground: 220 40% 10%; /* Very dark blue/black */
     --destructive: 0 72.2% 50.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 147 46% 30%; /* Dark Earthy Green border */
-    --input: 25 30% 20%;
-    --ring: 146 50% 45%; /* Lighter Sea Green for focus ring */
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 210 100% 30%; /* Darker version of primary blue */
+    --input: 220 40% 20%;
+    --ring: 30 100% 60%; /* Brighter Orange for focus ring */
+    --chart-1: 210 80% 65%;
+    --chart-2: 30 80% 65%;
+    --chart-3: 50 80% 70%;
+    --chart-4: 190 70% 55%;
+    --chart-5: 230 70% 65%;
 
     /* Sidebar theme (dark) */
-    --sidebar-background: 25 30% 18%;
-    --sidebar-foreground: 197 71% 85%;
-    --sidebar-primary: 147 46% 55%;
-    --sidebar-primary-foreground: 147 46% 10%;
-    --sidebar-accent: 146 50% 45%;
-    --sidebar-accent-foreground: 146 50% 5%;
-    --sidebar-border: 147 46% 35%;
-    --sidebar-ring: 146 50% 45%;
+    --sidebar-background: 220 40% 18%;
+    --sidebar-foreground: 200 100% 85%;
+    --sidebar-primary: 210 100% 60%;
+    --sidebar-primary-foreground: 220 40% 10%;
+    --sidebar-accent: 50 100% 65%;
+    --sidebar-accent-foreground: 220 40% 10%;
+    --sidebar-border: 210 100% 35%;
+    --sidebar-ring: 30 100% 60%;
   }
 }
 
@@ -85,6 +87,36 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* font-family removed to allow Geist from layout.tsx to take precedence */
+    /* Larger base font size for kids */
+    font-size: 18px; /* Adjust as needed */
   }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold; /* Ensure headings are bold */
+  }
+  /* Ensure Geist font is applied if not overridden by more specific selectors */
+  body, input, button, textarea, select {
+    font-family: var(--font-geist-sans), sans-serif;
+  }
+  .font-mono {
+    font-family: var(--font-geist-mono), monospace;
+  }
+}
+
+/* Additional playful styles */
+@layer components {
+  .kid-friendly-button {
+    @apply transform transition-transform duration-150 hover:scale-105 active:scale-95;
+  }
+  .kid-friendly-card {
+    @apply transition-all duration-300 hover:shadow-2xl hover:-translate-y-1;
+  }
+}
+
+/* Animation for elements appearing */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
 }

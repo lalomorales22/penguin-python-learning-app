@@ -1,9 +1,9 @@
 export default function Footer() {
   return (
-    <footer className="bg-muted text-muted-foreground py-6 text-center">
+    <footer className="bg-muted text-muted-foreground py-8 text-center">
       <div className="container mx-auto px-4">
-        <p className="text-sm">
-          &copy; {new Date().getFullYear()} Python Sprouts. Grow your coding skills!
+        <p className="text-md">
+          &copy; {new Date().getFullYear()} Penguin Python. Keep waddling and coding, little explorers!
         </p>
       </div>
     </footer>
