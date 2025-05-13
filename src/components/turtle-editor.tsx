@@ -51,15 +51,22 @@ export default function TurtleEditor() {
 
   const [skulptLoaded, setSkulptLoaded] = useState(false);
   const [skulptStdLibLoaded, setSkulptStdLibLoaded] = useState(false);
-  const [skulptFullyInitialized, setSkulptFullyInitialized] = useState(false); // New state
+  const [skulptFullyInitialized, setSkulptFullyInitialized] = useState(false);
+  const [skulptScriptError, setSkulptScriptError] = useState<string | null>(null); // For script loading errors
   const [isRunning, setIsRunning] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
   const skulptCanvasContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (skulptScriptError) {
+      setRunError(`Failed to load drawing tools: ${skulptScriptError}. Please check your internet connection and try refreshing the page.`);
+      setSkulptFullyInitialized(false);
+      return;
+    }
+
     if (skulptLoaded && skulptStdLibLoaded) {
       let attempts = 0;
-      const maxAttempts = 50; // Try for 5 seconds (50 * 100ms)
+      const maxAttempts = 100; // Increased attempts: Try for 10 seconds (100 * 100ms)
       const checkSkulptAvailability = () => {
         attempts++;
         if (
@@ -69,18 +76,19 @@ export default function TurtleEditor() {
           Sk.misceval &&
           Sk.importMainWithBody
         ) {
+          console.log("Skulpt fully initialized.");
           setSkulptFullyInitialized(true);
         } else if (attempts < maxAttempts) {
           setTimeout(checkSkulptAvailability, 100); // Poll every 100ms
         } else {
-          console.error("Skulpt failed to initialize after multiple attempts.");
-          setRunError("The drawing tools couldn't start. Please try refreshing the page.");
-          // Keep skulptFullyInitialized as false
+          console.error("Skulpt failed to initialize after multiple attempts (10 seconds).");
+          setRunError("The drawing tools couldn't start. This might be due to a slow connection or an issue with the drawing library. Please try refreshing the page.");
+          setSkulptFullyInitialized(false);
         }
       };
       checkSkulptAvailability();
     }
-  }, [skulptLoaded, skulptStdLibLoaded]);
+  }, [skulptLoaded, skulptStdLibLoaded, skulptScriptError]);
 
   const handleGetAISuggestion = async () => {
     if (!taskDescription.trim()) {
@@ -164,7 +172,7 @@ export default function TurtleEditor() {
 
   const builtinRead = (x: string) => {
     if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
-      throw new Error("File not found: '" + x + "'"); // Changed to throw Error for better catch
+      throw new Error("File not found: '" + x + "'"); 
     return Sk.builtinFiles["files"][x];
   }
 
@@ -178,7 +186,7 @@ export default function TurtleEditor() {
     setIsRunning(true);
 
     if (!skulptFullyInitialized) {
-        setRunError("Oops! The drawing tools are still warming up. Please wait a moment and try again.");
+        setRunError("Oops! The drawing tools are still warming up or couldn't start. Please wait a moment or try refreshing the page.");
         setIsRunning(false);
         if (skulptPlaceholderText) skulptPlaceholderText.style.display = 'block';
         return;
@@ -188,13 +196,13 @@ export default function TurtleEditor() {
     let canvasWidth = 400;
     let canvasHeight = 400;
     if (canvasContainer) {
-        canvasWidth = canvasContainer.clientWidth > 0 ? canvasContainer.clientWidth : 400; // Ensure positive width
-        canvasHeight = canvasContainer.clientHeight > 0 ? canvasContainer.clientHeight : 400; // Ensure positive height
+        canvasWidth = canvasContainer.clientWidth > 0 ? canvasContainer.clientWidth : 400;
+        canvasHeight = canvasContainer.clientHeight > 0 ? canvasContainer.clientHeight : 400;
     }
     
     try {
         Sk.configure({
-          output: (text: string) => { /* console.log(text) */ }, // Suppress console output from Skulpt print
+          output: (text: string) => { /* console.log(text) */ }, 
           read: builtinRead,
           __future__: Sk.python3,
           debugging: true, 
@@ -202,28 +210,24 @@ export default function TurtleEditor() {
           TurtleGraphics: { target: 'skulpt-canvas-output', width: canvasWidth, height: canvasHeight },
         });
         
-        // Reset turtle graphics state
         if (Sk.TurtleGraphics && Sk.TurtleGraphics.reset) {
             Sk.TurtleGraphics.reset(canvasWidth, canvasHeight);
-        } else if (Sk.tg) { // Fallback for older Skulpt or different init
+        } else if (Sk.tg) { 
             Sk.tg.canvasID = 'skulpt-canvas-output';
             const canvasDOMElement = document.getElementById(Sk.tg.canvasID);
             if (canvasDOMElement) {
-                // Clear previous canvas if any
                 while (canvasDOMElement.firstChild) {
                     canvasDOMElement.removeChild(canvasDOMElement.firstChild);
                 }
             }
-            Sk.tg.turtle_list = []; // Clear previous turtles
+            Sk.tg.turtle_list = []; 
             Sk.tg.WIDTH = canvasWidth;
             Sk.tg.HEIGHT = canvasHeight;
-             // Re-initialize the canvas for Sk.tg explicitly if needed
             if (Sk.tg.setup && typeof Sk.tg.setup === 'function') {
                  Sk.tg.setup();
             }
         }
     
-        // Ensure global turtle settings are updated
         if (Sk.TurtleGraphics) {
             Sk.TurtleGraphics.width = canvasWidth;
             Sk.TurtleGraphics.height = canvasHeight;
@@ -262,8 +266,30 @@ export default function TurtleEditor() {
 
   return (
     <>
-      <Script src="https://skulpt.org/js/skulpt.min.js" strategy="lazyOnload" onReady={() => setSkulptLoaded(true)} />
-      <Script src="https://skulpt.org/js/skulpt-stdlib.js" strategy="lazyOnload" onReady={() => setSkulptStdLibLoaded(true)} />
+      <Script 
+        src="https://skulpt.org/js/skulpt.min.js" 
+        strategy="lazyOnload" 
+        onReady={() => {
+          console.log("Skulpt main script loaded (skulpt.min.js).");
+          setSkulptLoaded(true);
+        }}
+        onError={(e) => {
+          console.error("Failed to load skulpt.min.js:", e);
+          setSkulptScriptError("Main drawing library (skulpt.min.js) failed to load.");
+        }}
+      />
+      <Script 
+        src="https://skulpt.org/js/skulpt-stdlib.js" 
+        strategy="lazyOnload" 
+        onReady={() => {
+          console.log("Skulpt standard library script loaded (skulpt-stdlib.js).");
+          setSkulptStdLibLoaded(true);
+        }}
+        onError={(e) => {
+          console.error("Failed to load skulpt-stdlib.js:", e);
+          setSkulptScriptError("Standard drawing library (skulpt-stdlib.js) failed to load.");
+        }}
+      />
       
       <div className="grid md:grid-cols-2 gap-8 items-start">
         <form onSubmit={handleSubmit} className="space-y-6 p-6 bg-card rounded-xl shadow-xl kid-friendly-card">
@@ -374,7 +400,7 @@ export default function TurtleEditor() {
               Show Example Again
             </Button>
           </div>
-          {(!skulptFullyInitialized) && !isRunning && (
+          {(!skulptFullyInitialized && !skulptScriptError) && !isRunning && ( // Show warming up only if no script error
             <Alert variant="default" className="mt-4 bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-900/50 dark:border-blue-700 dark:text-blue-300">
                 <Loader2 className="h-5 w-5 animate-spin mr-2 inline-block" />
                 <AlertDescription>Warming up the drawing tools... Please wait a moment!</AlertDescription>
@@ -414,4 +440,3 @@ export default function TurtleEditor() {
     </>
   );
 }
-
