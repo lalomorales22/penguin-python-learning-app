@@ -7,88 +7,45 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { usePortfolio } from '@/contexts/portfolio-context';
 import { useToast } from '@/hooks/use-toast';
-import { Save, Palette, Trash2, RefreshCcw, Play, Loader2 } from 'lucide-react';
-import Image from 'next/image';
+import { Save, Palette, Trash2, RefreshCcw, Play, Loader2, Wand2, Sparkles, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 import Script from 'next/script';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PenguinIcon } from './icons/penguin-icon';
+import { suggestCode } from '@/ai/flows/code-suggestion';
+import type { SuggestCodeOutput } from '@/ai/flows/code-suggestion';
 
 const initialCode = `# Welcome to the Penguin Playground, Little Coder!
-# Type your Python Turtle commands here.
-# Let's make some amazing penguin art!
-#
-# Try this example:
+# Ask the AI to help you draw, or try this example:
 #
 import turtle
 
-# Get your penguin ready!
 pen = turtle.Turtle()
-pen.shape("turtle") # We'll pretend this is a penguin for now!
-pen.color("black", "hsl(35, 100%, 60%)") # Penguin colors! (using HSL for beak)
-pen.speed(3) # Not too fast, not too slow
+pen.shape("turtle") 
+pen.color("blue") 
+pen.speed(3)
 
-# Let's draw a simple penguin body
-pen.fillcolor("black")
+pen.fillcolor("cyan")
 pen.begin_fill()
-pen.circle(50) # Big body
+for _ in range(4):
+    pen.forward(100)
+    pen.left(90)
 pen.end_fill()
 
-pen.penup()
-pen.goto(0, 75) # Move up for the head
-pen.pendown()
-
-pen.fillcolor("white")
-pen.begin_fill()
-pen.circle(30) # Smaller head, white face part
-pen.end_fill()
-
-# Re-outline head in black
-pen.color("black")
-pen.circle(30)
-
-
-# Add eyes
-pen.penup()
-pen.goto(-10, 95)
-pen.pendown()
-pen.fillcolor("black")
-pen.begin_fill()
-pen.circle(3)
-pen.end_fill()
-
-pen.penup()
-pen.goto(10, 95)
-pen.pendown()
-pen.fillcolor("black")
-pen.begin_fill()
-pen.circle(3)
-pen.end_fill()
-
-# Add a tiny beak
-pen.penup()
-pen.goto(0, 85)
-pen.pendown()
-pen.color("hsl(35, 100%, 60%)") # Sunny Orange/Yellow for beak
-pen.fillcolor("hsl(35, 100%, 60%)")
-pen.begin_fill()
-pen.setheading(-60) # Point beak downwards
-pen.forward(15)
-pen.left(120)
-pen.forward(15)
-pen.left(120)
-pen.forward(15)
-pen.end_fill()
-
-# Hide your penguin artist
 pen.hideturtle()
 
-# turtle.done() # Not needed with Skulpt, remove or comment out
+# turtle.done() # Not needed with Skulpt
 `;
 
 export default function TurtleEditor() {
-  const [title, setTitle] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [artworkTitle, setArtworkTitle] = useState('');
   const [code, setCode] = useState(initialCode);
+  const [aiExplanation, setAiExplanation] = useState<string | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
   const { addProject } = usePortfolio();
   const { toast } = useToast();
 
@@ -98,12 +55,38 @@ export default function TurtleEditor() {
   const [runError, setRunError] = useState<string | null>(null);
   const skulptCanvasContainerRef = useRef<HTMLDivElement>(null);
 
+  const handleGetAISuggestion = async () => {
+    if (!taskDescription.trim()) {
+      setAiError('Please tell Professor Penguino what you want to draw!');
+      return;
+    }
+    setIsAiLoading(true);
+    setAiError(null);
+    setAiExplanation(null);
+    try {
+      const aiResponse: SuggestCodeOutput = await suggestCode({ task: taskDescription });
+      setCode(aiResponse.codeSnippet || '');
+      setAiExplanation(aiResponse.explanation);
+      toast({
+        title: 'Code Idea from Professor Penguino!',
+        description: 'Check out the code and explanation below.',
+      });
+    } catch (e) {
+      console.error(e);
+      setAiError("Uh oh! Professor Penguino's AI brain is a bit frosty. Try asking again!");
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!title.trim()) {
+    const projectTitle = artworkTitle.trim() || taskDescription.trim();
+
+    if (!projectTitle) {
       toast({
         title: 'Hold on, Little Penguin!',
-        description: 'Please give your amazing artwork a title.',
+        description: 'Please give your artwork a title, or ask the AI to help you create something first!',
         variant: 'destructive',
       });
       return;
@@ -111,39 +94,46 @@ export default function TurtleEditor() {
     if (!code.trim()) {
       toast({
         title: 'Oopsie!',
-        description: 'You need to write some Penguin code to save your project.',
+        description: 'You need some Penguin code to save your project.',
         variant: 'destructive',
       });
       return;
     }
-    addProject({ title, code });
+    addProject({ title: projectTitle, code });
     toast({
       title: 'Hooray! Project Saved!',
-      description: `Your masterpiece "${title}" is now in Maximus's Igloo!`,
+      description: `Your masterpiece "${projectTitle}" is now in Maximus's Igloo!`,
     });
-    setTitle('');
+    setArtworkTitle(''); 
+    // setTaskDescription(''); // Optionally clear task description
     // setCode(initialCode); // Optionally reset code
   };
 
   const handleClear = () => {
-    setTitle('');
+    setTaskDescription('');
+    setArtworkTitle('');
     setCode('');
+    setAiExplanation(null);
+    setAiError(null);
     const skulptOutputDiv = document.getElementById('skulpt-canvas-output');
-    if (skulptOutputDiv) skulptOutputDiv.innerHTML = ''; // Clear canvas
+    if (skulptOutputDiv) skulptOutputDiv.innerHTML = '';
     const skulptPlaceholderText = document.getElementById('skulpt-placeholder-text');
     if (skulptPlaceholderText) skulptPlaceholderText.style.display = 'block';
     setRunError(null);
     toast({
       title: 'Fresh Ice!',
-      description: 'Code and title cleared. Ready for new frosty ideas!',
+      description: 'Everything cleared. Ready for new frosty ideas!',
     });
   }
 
   const handleResetExample = () => {
     setCode(initialCode);
+    setTaskDescription('');
+    setAiExplanation(null);
+    setAiError(null);
     toast({
       title: 'Example Loaded!',
-      description: 'The penguin example code is back. Feel free to change it!',
+      description: 'The example code is back. Feel free to change it!',
     });
   }
 
@@ -157,24 +147,18 @@ export default function TurtleEditor() {
     const skulptOutputDiv = document.getElementById('skulpt-canvas-output');
     const skulptPlaceholderText = document.getElementById('skulpt-placeholder-text');
 
-    if (skulptOutputDiv) {
-      skulptOutputDiv.innerHTML = ''; // Clear previous output
-    }
-    if (skulptPlaceholderText) {
-        skulptPlaceholderText.style.display = 'none'; // Hide placeholder
-    }
+    if (skulptOutputDiv) skulptOutputDiv.innerHTML = ''; 
+    if (skulptPlaceholderText) skulptPlaceholderText.style.display = 'none';
     setRunError(null);
     setIsRunning(true);
 
     if (!skulptLoaded || !skulptStdLibLoaded || typeof Sk === 'undefined' || typeof Sk.TurtleGraphics === 'undefined') {
-        console.error("Skulpt or Skulpt TurtleGraphics not loaded.");
-        setRunError("Oops! The drawing tools aren't ready. Please refresh the page or try again in a moment.");
+        setRunError("Oops! The drawing tools aren't ready. Please refresh or wait.");
         setIsRunning(false);
         if (skulptPlaceholderText) skulptPlaceholderText.style.display = 'block';
         return;
     }
     
-    // Ensure the container for the canvas is sized before Skulpt uses it.
     const canvasContainer = skulptCanvasContainerRef.current;
     let canvasWidth = 400;
     let canvasHeight = 400;
@@ -184,26 +168,20 @@ export default function TurtleEditor() {
     }
     
     Sk.configure({
-      output: (text: string) => { 
-        // console.log(text); // You might want to display print() output somewhere
-      },
+      output: (text: string) => {},
       read: builtinRead,
       __future__: Sk.python3,
       debugging: true,
       inputfunTakesPrompt: true,
-      TurtleGraphics: {
-        target: 'skulpt-canvas-output', 
-        width: canvasWidth, 
-        height: canvasHeight,
-      },
+      TurtleGraphics: { target: 'skulpt-canvas-output', width: canvasWidth, height: canvasHeight },
     });
     
     if (Sk.TurtleGraphics.reset) {
         Sk.TurtleGraphics.reset(canvasWidth, canvasHeight);
-    } else if (Sk.tg) { // Fallback for older Skulpt or different structure
-        Sk.tg.canvasID = 'skulpt-canvas-output'; // Ensure it knows the target
+    } else if (Sk.tg) {
+        Sk.tg.canvasID = 'skulpt-canvas-output';
         const canvas = document.getElementById(Sk.tg.canvasID);
-         if (canvas && canvas.firstChild && canvas.firstChild.getContext) { // Skulpt creates its own canvas element
+         if (canvas && canvas.firstChild && (canvas.firstChild as HTMLCanvasElement).getContext) {
             const ctx = (canvas.firstChild as HTMLCanvasElement).getContext('2d');
             ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
             (canvas.firstChild as HTMLCanvasElement).width = canvasWidth;
@@ -217,33 +195,25 @@ export default function TurtleEditor() {
     (Sk.TurtleGraphics || (Sk.tg = {})).width = canvasWidth;
     (Sk.TurtleGraphics || (Sk.tg = {})).height = canvasHeight;
 
-    const modifiedCode = code.replace(/turtle\.done\(\)|turtle\.Screen\(\)\.mainloop\(\)|screen\.mainloop\(\)/g, '# $& # Removed for browser execution');
+    const cleanedCode = code.replace(/turtle\.done\(\)|turtle\.Screen\(\)\.mainloop\(\)|screen\.mainloop\(\)/g, '# $& # Removed for browser execution');
 
-    Sk.misceval.asyncToPromise(() => {
-      return Sk.importMainWithBody("<stdin>", false, modifiedCode, true);
-    })
-    .then((mod: any) => {
-      // console.log('Skulpt execution success');
-    })
+    Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, cleanedCode, true))
+    .then((mod: any) => {})
     .catch((err: any) => {
-      console.error('Skulpt execution error:', err);
       let errorMsg = err.toString();
-      if (err.tp$name && err.args) { // Try to format Python-like errors
+      if (err.tp$name && err.args) {
           errorMsg = `${err.tp$name}: ${err.args.v[0].v}`;
           if (err.traceback && err.traceback.length > 0) {
               const tb = err.traceback[0];
               errorMsg += ` (line ${tb.lineno})`;
           }
       }
-      setRunError(`Brrr! Penguin code slip-up! ${errorMsg}. Check your code for typos or ask Professor Penguino!`);
+      setRunError(`Brrr! Penguin code slip-up! ${errorMsg}. Check your code or ask Professor Penguino!`);
       if (skulptPlaceholderText) skulptPlaceholderText.style.display = 'block'; 
       if (skulptOutputDiv) skulptOutputDiv.innerHTML = `<div class="text-destructive p-4 text-center">${errorMsg}</div>`;
     })
-    .finally(() => {
-      setIsRunning(false);
-    });
+    .finally(() => setIsRunning(false));
   };
-
 
   return (
     <>
@@ -253,28 +223,74 @@ export default function TurtleEditor() {
       <div className="grid md:grid-cols-2 gap-8 items-start">
         <form onSubmit={handleSubmit} className="space-y-6 p-6 bg-card rounded-xl shadow-xl kid-friendly-card">
           <div>
-            <label htmlFor="project-title" className="block text-xl font-medium text-foreground mb-2">
-              Name Your Penguin Masterpiece:
+            <label htmlFor="task-description" className="block text-xl font-medium text-foreground mb-2">
+              What do you want to create? (AI will help!)
             </label>
             <Input
-              id="project-title"
+              id="task-description"
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={taskDescription}
+              onChange={(e) => setTaskDescription(e.target.value)}
+              placeholder="e.g., draw a blue penguin, make a star"
+              className="text-xl p-4 rounded-lg"
+            />
+          </div>
+           <Button 
+              type="button" 
+              onClick={handleGetAISuggestion} 
+              disabled={isAiLoading || !skulptLoaded || !skulptStdLibLoaded}
+              className="w-full text-xl py-4 kid-friendly-button bg-secondary text-secondary-foreground hover:bg-secondary/90"
+            >
+              {isAiLoading ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : <Wand2 className="mr-2 h-6 w-6" />}
+              {isAiLoading ? 'Penguino Thinking...' : 'Get Penguin Code Ideas!'}
+          </Button>
+
+          {aiError && (
+            <Alert variant="destructive">
+              <PenguinIcon className="h-5 w-5" />
+              <AlertTitle>AI Error</AlertTitle>
+              <AlertDescription>{aiError}</AlertDescription>
+            </Alert>
+          )}
+
+          {aiExplanation && (
+            <Card className="bg-primary/10 animate-fadeIn">
+              <CardHeader>
+                <CardTitle className="text-xl text-primary flex items-center">
+                  <Sparkles className="mr-2 h-6 w-6 text-secondary" />
+                  Professor Penguino Explains:
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-md text-muted-foreground whitespace-pre-wrap leading-relaxed">{aiExplanation}</p>
+              </CardContent>
+            </Card>
+          )}
+          
+          <div>
+            <label htmlFor="artwork-title" className="block text-xl font-medium text-foreground mb-2 mt-4">
+              Artwork Title (optional):
+            </label>
+            <Input
+              id="artwork-title"
+              type="text"
+              value={artworkTitle}
+              onChange={(e) => setArtworkTitle(e.target.value)}
               placeholder="My Awesome Penguin Picture!"
               className="text-xl p-4 rounded-lg"
             />
           </div>
+
           <div>
             <label htmlFor="turtle-code" className="block text-xl font-medium text-foreground mb-2">
-              Tell Your Penguin What To Do (Python Code):
+              Your Penguin Code:
             </label>
             <Textarea
               id="turtle-code"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="Enter your Python Penguin code here..."
-              rows={18}
+              rows={12}
               className="font-mono text-md p-4 leading-relaxed bg-muted/50 focus:bg-background rounded-lg shadow-inner"
             />
           </div>
@@ -299,7 +315,6 @@ export default function TurtleEditor() {
               variant="outline" 
               onClick={handleClear}
               className="text-xl py-4 kid-friendly-button"
-              aria-label="Clear code and title"
             >
               <Trash2 className="mr-2 h-6 w-6" />
               Clear All
@@ -309,7 +324,6 @@ export default function TurtleEditor() {
               variant="ghost" 
               onClick={handleResetExample}
               className="text-lg py-3 w-full kid-friendly-button text-muted-foreground hover:text-primary"
-              aria-label="Reset to example code"
             >
               <RefreshCcw className="mr-2 h-5 w-5" />
               Show Example Again
@@ -332,12 +346,9 @@ export default function TurtleEditor() {
             id="turtle-canvas-container"
             ref={skulptCanvasContainerRef}
             className="aspect-square w-full bg-sky-100 dark:bg-sky-900/30 rounded-lg shadow-inner flex items-center justify-center border-4 border-dashed border-primary/40 p-1 relative overflow-hidden"
-            aria-label="Penguin Graphics Canvas where drawings appear"
-            style={{ minHeight: '400px' }} // Ensure it has a minimum size for Skulpt
+            style={{ minHeight: '400px' }}
           >
-            <div id="skulpt-canvas-output" className="w-full h-full flex items-center justify-center">
-              {/* Skulpt will inject its canvas here. Child canvas should be 100% width/height of this div. */}
-            </div>
+            <div id="skulpt-canvas-output" className="w-full h-full flex items-center justify-center"></div>
             <p id="skulpt-placeholder-text" className="absolute inset-0 flex flex-col items-center justify-center text-center text-muted-foreground text-xl p-4">
                 <PenguinIcon className="w-24 h-24 text-primary/50 mb-4" />
                 Click &quot;Run My Penguin Code!&quot; to see your drawing here!
@@ -345,6 +356,7 @@ export default function TurtleEditor() {
           </div>
           {runError && (
               <Alert variant="destructive" className="mt-4">
+                  <HelpCircle className="h-5 w-5" />
                   <AlertTitle className="font-bold text-lg">Oopsie! Error on the Ice!</AlertTitle>
                   <AlertDescription className="text-md whitespace-pre-wrap">{runError}</AlertDescription>
               </Alert>
