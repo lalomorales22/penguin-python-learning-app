@@ -6,112 +6,172 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { usePortfolio } from '@/contexts/portfolio-context';
 import { useToast } from '@/hooks/use-toast';
-import { Save, Palette, Trash2 } from 'lucide-react';
+import { Save, Palette, Trash2, RefreshCcw } from 'lucide-react';
 import Image from 'next/image';
+
+const initialCode = `# Welcome to the Turtle Showcase, Little Coder!
+# Type your Python Turtle commands here.
+# Let's make some amazing art!
+#
+# Try this example:
+#
+# import turtle
+#
+# # Get your turtle ready!
+# my_turtle = turtle.Turtle()
+# my_turtle.shape("turtle") # Let's make it look like a turtle!
+# my_turtle.color("green") # What's your favorite color?
+#
+# # Let's draw a colorful square!
+# my_turtle.fillcolor("yellow")
+# my_turtle.begin_fill()
+# for _ in range(4):
+#   my_turtle.forward(100) # Move forward 100 steps
+#   my_turtle.left(90)   # Turn left 90 degrees
+# my_turtle.end_fill()
+#
+# # Make your turtle hide so you can see your drawing
+# my_turtle.hideturtle()
+#
+# turtle.done() # Important to keep the window open!
+`;
 
 export default function TurtleEditor() {
   const [title, setTitle] = useState('');
-  const [code, setCode] = useState(
-    '# Welcome to the Turtle Showcase!\n# Type your Python Turtle commands here.\n# For example:\n\n# import turtle\n# screen = turtle.Screen()\n# my_turtle = turtle.Turtle()\n\n# my_turtle.color("blue")\n# my_turtle.forward(100)\n# my_turtle.left(90)\n# my_turtle.forward(100)\n\n# screen.mainloop()'
-  );
+  const [code, setCode] = useState(initialCode);
   const { addProject } = usePortfolio();
   const { toast } = useToast();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!title.trim() || !code.trim()) {
+    if (!title.trim()) {
       toast({
-        title: 'Uh oh!',
-        description: 'Please provide a title and some code for your masterpiece.',
+        title: 'Hold on, Sprout!',
+        description: 'Please give your amazing artwork a title.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (!code.trim()) {
+      toast({
+        title: 'Oopsie!',
+        description: 'You need to write some Turtle code to save your project.',
         variant: 'destructive',
       });
       return;
     }
     addProject({ title, code });
     toast({
-      title: 'Woohoo! Project Saved!',
-      description: `"${title}" has been added to your portfolio.`,
+      title: 'Hooray! Project Saved!',
+      description: `Your masterpiece "${title}" is now in your Learner's Space!`,
     });
     setTitle('');
-    // Optionally clear code or keep it for further editing
-    // setCode(''); 
+    // setCode(initialCode); // Reset to initial example or clear
   };
+
+  const handleClear = () => {
+    setTitle('');
+    setCode('');
+     toast({
+      title: 'Fresh Start!',
+      description: 'Code and title cleared. Ready for new ideas!',
+    });
+  }
+
+  const handleResetExample = () => {
+    setCode(initialCode);
+    toast({
+      title: 'Example Loaded!',
+      description: 'The example code is back. Feel free to change it!',
+    });
+  }
+
 
   return (
     <div className="grid md:grid-cols-2 gap-8 items-start">
-      <form onSubmit={handleSubmit} className="space-y-6 p-6 bg-card rounded-lg shadow-lg">
+      <form onSubmit={handleSubmit} className="space-y-6 p-6 bg-card rounded-xl shadow-xl kid-friendly-card">
         <div>
-          <label htmlFor="project-title" className="block text-lg font-medium text-foreground mb-2">
-            Project Title:
+          <label htmlFor="project-title" className="block text-xl font-medium text-foreground mb-2">
+            Name Your Artwork:
           </label>
           <Input
             id="project-title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="My Awesome Turtle Drawing"
-            className="text-lg p-3"
+            placeholder="My Super Turtle Drawing!"
+            className="text-xl p-4 rounded-lg"
           />
         </div>
         <div>
-          <label htmlFor="turtle-code" className="block text-lg font-medium text-foreground mb-2">
-            Python Turtle Code:
+          <label htmlFor="turtle-code" className="block text-xl font-medium text-foreground mb-2">
+            Tell Your Turtle What To Do (Python Code):
           </label>
           <Textarea
             id="turtle-code"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder="Enter your Python Turtle code here..."
-            rows={15}
-            className="font-mono text-sm p-3 leading-relaxed bg-muted/50 focus:bg-background"
+            rows={18}
+            className="font-mono text-md p-4 leading-relaxed bg-muted/50 focus:bg-background rounded-lg shadow-inner"
           />
         </div>
-        <div className="flex space-x-3">
-          <Button type="submit" className="text-lg py-3 flex-grow bg-accent text-accent-foreground hover:bg-accent/90">
-            <Save className="mr-2 h-5 w-5" />
-            Save to Portfolio
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Button type="submit" className="text-xl py-4 kid-friendly-button bg-accent text-accent-foreground hover:bg-accent/90 col-span-1 sm:col-span-2">
+            <Save className="mr-2 h-6 w-6" />
+            Save My Art!
           </Button>
           <Button 
             type="button" 
             variant="outline" 
-            onClick={() => { setCode(''); setTitle(''); }}
-            className="text-lg py-3"
+            onClick={handleClear}
+            className="text-xl py-4 kid-friendly-button"
             aria-label="Clear code and title"
           >
-            <Trash2 className="mr-2 h-5 w-5" />
-            Clear
+            <Trash2 className="mr-2 h-6 w-6" />
+            Clear All
           </Button>
         </div>
+         <Button 
+            type="button" 
+            variant="ghost" 
+            onClick={handleResetExample}
+            className="text-lg py-3 w-full kid-friendly-button text-muted-foreground hover:text-primary"
+            aria-label="Reset to example code"
+          >
+            <RefreshCcw className="mr-2 h-5 w-5" />
+            Show Example Code Again
+          </Button>
       </form>
 
-      <div className="space-y-4">
-        <h3 className="text-2xl font-semibold text-foreground flex items-center">
-          <Palette className="mr-2 h-7 w-7 text-secondary" />
-          Turtle Canvas (Conceptual)
+      <div className="space-y-6 p-6 bg-card rounded-xl shadow-xl kid-friendly-card">
+        <h3 className="text-3xl font-semibold text-foreground flex items-center justify-center">
+          <Palette className="mr-3 h-8 w-8 text-secondary" />
+          Your Turtle&apos;s Drawing Board!
         </h3>
         <div 
-          className="aspect-square w-full bg-secondary/20 rounded-lg shadow-inner flex items-center justify-center border-2 border-dashed border-secondary/50"
-          aria-label="Conceptual Turtle Graphics Canvas"
+          className="aspect-square w-full bg-sky-100 dark:bg-sky-900/30 rounded-lg shadow-inner flex items-center justify-center border-4 border-dashed border-secondary/50 p-4"
+          aria-label="Conceptual Turtle Graphics Canvas where drawings appear"
         >
-          <div className="text-center p-4">
+          <div className="text-center">
             <Image 
-              src="https://picsum.photos/seed/turtlecanvas/400/300" 
-              alt="Conceptual Turtle Output" 
+              src="https://picsum.photos/seed/turtleworld/400/300" 
+              alt="A conceptual image of what a turtle drawing might look like" 
               width={400} 
               height={300} 
-              className="rounded-md opacity-70"
-              data-ai-hint="abstract line art"
+              className="rounded-md opacity-80 shadow-lg mx-auto"
+              data-ai-hint="colorful turtle drawing"
             />
-            <p className="mt-4 text-muted-foreground text-lg">
-              Your Turtle creations would appear here!
+            <p className="mt-6 text-muted-foreground text-xl">
+              This is where your turtle&apos;s amazing drawings will appear!
             </p>
-            <p className="text-sm text-muted-foreground/70">
-              (Currently, this is a visual placeholder. Code execution is not implemented in this showcase.)
+            <p className="text-md text-muted-foreground/70 mt-2">
+              (Right now, this is a sneak peek. The actual drawing happens when you run your Python code on your computer or a special Python runner!)
             </p>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground text-center">
-          Tip: Use Python&apos;s <code>turtle</code> module commands. Our AI can help you learn them in the Concept Clarifier!
+        <p className="text-md text-muted-foreground text-center">
+          Want to learn new Turtle tricks? Ask the <Link href="/clarifier" className="text-accent hover:underline font-semibold">Concept Clarifier</Link>!
         </p>
       </div>
     </div>

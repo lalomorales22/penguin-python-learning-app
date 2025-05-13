@@ -11,7 +11,7 @@ interface PortfolioContextType {
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_KEY = 'pythonSproutsPortfolio';
+const LOCAL_STORAGE_KEY = 'pythonSproutsPortfolio'; // Updated key
 
 export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
   const [projects, setProjects] = useState<TurtleProject[]>(() => {

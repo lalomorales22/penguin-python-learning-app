@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, Sparkles, Terminal } from 'lucide-react';
+import { Loader2, Sparkles, Brain, MessageSquareQuestion, FileText, Lightbulb } from 'lucide-react'; // Added Brain, FileText, MessageSquareQuestion
 
 export default function ClarifierForm() {
   const [concept, setConcept] = useState('');
@@ -18,7 +18,7 @@ export default function ClarifierForm() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!concept.trim()) {
-      setError('Please enter a Python concept to clarify.');
+      setError('Oops! Please type in a Python word you want to know more about.');
       return;
     }
     setIsLoading(true);
@@ -30,7 +30,7 @@ export default function ClarifierForm() {
       setResult(aiResponse);
     } catch (e) {
       console.error(e);
-      setError('Oops! Something went wrong while clarifying the concept. Please try again.');
+      setError('Uh oh! My AI brain had a little hiccup. Can you try asking again, please?');
     } finally {
       setIsLoading(false);
     }
@@ -38,62 +38,69 @@ export default function ClarifierForm() {
 
   return (
     <div className="space-y-8 max-w-2xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-4 p-6 bg-card rounded-lg shadow-lg">
+      <form onSubmit={handleSubmit} className="space-y-6 p-6 bg-card rounded-xl shadow-xl kid-friendly-card">
         <div>
-          <label htmlFor="concept-input" className="block text-lg font-medium text-foreground mb-2">
-            What Python concept do you want to understand?
+          <label htmlFor="concept-input" className="block text-xl font-medium text-foreground mb-3 flex items-center">
+            <MessageSquareQuestion className="mr-2 h-7 w-7 text-secondary" />
+            What Python word are you curious about?
           </label>
           <Input
             id="concept-input"
             type="text"
             value={concept}
             onChange={(e) => setConcept(e.target.value)}
-            placeholder="e.g., loops, variables, functions"
-            className="text-lg p-3"
+            placeholder="e.g., loop, variable, function"
+            className="text-xl p-4 rounded-lg"
             aria-describedby={error ? "error-message" : undefined}
           />
         </div>
-        <Button type="submit" disabled={isLoading} className="w-full text-lg py-3 bg-accent text-accent-foreground hover:bg-accent/90">
+        <Button type="submit" disabled={isLoading} className="w-full text-xl py-4 kid-friendly-button bg-accent text-accent-foreground hover:bg-accent/90">
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Clarifying...
+              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+              Thinking...
             </>
           ) : (
             <>
-              <Sparkles className="mr-2 h-5 w-5" />
-              Clarify Concept
+              <Brain className="mr-2 h-6 w-6" />
+              Explain It To Me!
             </>
           )}
         </Button>
       </form>
 
       {error && (
-        <Alert variant="destructive" id="error-message">
-          <Terminal className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
+        <Alert variant="destructive" id="error-message" className="rounded-lg shadow-md p-5">
+          <Lightbulb className="h-6 w-6" />
+          <AlertTitle className="text-xl font-bold">Oopsie!</AlertTitle>
+          <AlertDescription className="text-lg">{error}</AlertDescription>
         </Alert>
       )}
 
       {result && (
-        <Card className="shadow-xl animate-fadeIn">
-          <CardHeader>
+        <Card className="shadow-2xl animate-fadeIn kid-friendly-card rounded-xl">
+          <CardHeader className="bg-primary/10 rounded-t-xl p-6">
             <CardTitle className="text-3xl font-bold text-primary flex items-center">
-              <Sparkles className="mr-3 h-8 w-8 text-secondary" />
-              Here&apos;s the scoop on &quot;{concept}&quot;!
+              <Sparkles className="mr-3 h-8 w-8 text-secondary animate-pulse" />
+              All about &quot;{concept}&quot;!
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-8 p-6">
             <div>
-              <h3 className="text-2xl font-semibold text-foreground mb-2">Explanation:</h3>
-              <p className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed p-4 bg-secondary/10 rounded-md">
+              <h3 className="text-2xl font-semibold text-foreground mb-3 flex items-center">
+                <FileText className="mr-2 h-7 w-7 text-accent" />
+                Here&apos;s what it means:
+                </h3>
+              <div className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed p-5 bg-secondary/10 rounded-lg shadow-inner">
                 {result.explanation}
-              </p>
+              </div>
             </div>
             <div>
-              <h3 className="text-2xl font-semibold text-foreground mb-2">Example Code:</h3>
-              <pre className="bg-muted text-muted-foreground p-4 rounded-md overflow-x-auto text-sm font-mono shadow-inner">
+              <h3 className="text-2xl font-semibold text-foreground mb-3 flex items-center">
+                <Lightbulb className="mr-2 h-7 w-7 text-accent" />
+                 See it in action (Example Code):
+                </h3>
+              <pre className="bg-muted text-muted-foreground p-5 rounded-lg overflow-x-auto text-md font-mono shadow-inner">
                 <code>{result.exampleCode}</code>
               </pre>
             </div>

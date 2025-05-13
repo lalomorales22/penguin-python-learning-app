@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Penguin Python: Code with Maximus!',
-  description: 'Join Maximus the Kid and learn Python programming in a fun, colorful, and engaging way! Explore coding with playful penguins!',
+  title: 'Python Sprouts: Grow Your Coding Skills!',
+  description: 'Welcome to Python Sprouts! Learn Python in a fun, colorful, and engaging way designed for young coders. Explore coding concepts, create turtle art, and watch your skills grow!',
 };
 
 export default function RootLayout({
@@ -30,9 +30,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased text-base md:text-lg`}>
         <PortfolioProvider>
-          <div className="flex flex-col min-h-screen">
+          <div className="flex flex-col min-h-screen bg-background">
             <Navbar />
-            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 spacious-padding">
               {children}
             </main>
             <Footer />

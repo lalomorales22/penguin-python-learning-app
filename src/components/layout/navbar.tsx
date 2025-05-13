@@ -1,9 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, Lightbulb, UserCircle, Menu } from 'lucide-react';
-import { PenguinLogo } from '@/components/icons/penguin-logo';
-import { PenguinIcon } from '@/components/icons/penguin-icon';
+import { Home, Lightbulb, UserCircle, Menu, Sprout, Turtle } from 'lucide-react'; // Added Sprout and Turtle
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -14,12 +12,15 @@ import {
 } from "@/components/ui/sheet"
 import React from 'react';
 
+// Placeholder for PythonSproutsLogo - replace with actual SVG or component
+const PythonSproutsLogo = () => <Sprout className="h-12 w-12 md:h-16 md:w-16 text-secondary drop-shadow-md" />;
+
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/clarifier', label: 'Concept Helper', icon: Lightbulb },
-  { href: '/penguin-playground', label: 'Penguin Playground', icon: PenguinIcon },
-  { href: '/maximus-hub', label: "Maximus's Hub", icon: UserCircle },
+  { href: '/clarifier', label: 'Concept Clarifier', icon: Lightbulb },
+  { href: '/turtle', label: 'Turtle Showcase', icon: Turtle }, // Updated from Penguin Playground
+  { href: '/profile', label: "Learner's Space", icon: UserCircle }, // Updated from Maximus's Hub
 ];
 
 export default function Navbar() {
@@ -31,8 +32,8 @@ export default function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 md:h-24">
           <Link href="/" className="flex items-center space-x-2 text-primary-foreground hover:opacity-90 transition-opacity">
-            <PenguinLogo className="h-12 w-12 md:h-16 md:w-16 text-secondary drop-shadow-md" />
-            <span className="text-3xl md:text-4xl font-extrabold tracking-tight">Penguin Python</span>
+            <PythonSproutsLogo />
+            <span className="text-3xl md:text-4xl font-extrabold tracking-tight">Python Sprouts</span>
           </Link>
           
           {/* Desktop Navigation */}
