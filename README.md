@@ -1,4 +1,6 @@
 # 🐧❄️ Welcome to Penguin Python! ❄️🐧
+![Screenshot 2025-05-13 at 2 15 44 PM](https://github.com/user-attachments/assets/c789d3ed-dcc4-4b71-90d3-90e2a1198eb9)
+
 
 Hey there, Future Coding Superstar! 👋
 
