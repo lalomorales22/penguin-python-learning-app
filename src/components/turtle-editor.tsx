@@ -51,9 +51,36 @@ export default function TurtleEditor() {
 
   const [skulptLoaded, setSkulptLoaded] = useState(false);
   const [skulptStdLibLoaded, setSkulptStdLibLoaded] = useState(false);
+  const [skulptFullyInitialized, setSkulptFullyInitialized] = useState(false); // New state
   const [isRunning, setIsRunning] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
   const skulptCanvasContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (skulptLoaded && skulptStdLibLoaded) {
+      let attempts = 0;
+      const maxAttempts = 50; // Try for 5 seconds (50 * 100ms)
+      const checkSkulptAvailability = () => {
+        attempts++;
+        if (
+          typeof Sk !== 'undefined' &&
+          Sk.TurtleGraphics &&
+          Sk.builtinFiles && 
+          Sk.misceval &&
+          Sk.importMainWithBody
+        ) {
+          setSkulptFullyInitialized(true);
+        } else if (attempts < maxAttempts) {
+          setTimeout(checkSkulptAvailability, 100); // Poll every 100ms
+        } else {
+          console.error("Skulpt failed to initialize after multiple attempts.");
+          setRunError("The drawing tools couldn't start. Please try refreshing the page.");
+          // Keep skulptFullyInitialized as false
+        }
+      };
+      checkSkulptAvailability();
+    }
+  }, [skulptLoaded, skulptStdLibLoaded]);
 
   const handleGetAISuggestion = async () => {
     if (!taskDescription.trim()) {
@@ -105,8 +132,6 @@ export default function TurtleEditor() {
       description: `Your masterpiece "${projectTitle}" is now in Maximus's Igloo!`,
     });
     setArtworkTitle(''); 
-    // setTaskDescription(''); // Optionally clear task description
-    // setCode(initialCode); // Optionally reset code
   };
 
   const handleClear = () => {
@@ -139,7 +164,7 @@ export default function TurtleEditor() {
 
   const builtinRead = (x: string) => {
     if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
-      throw "File not found: '" + x + "'";
+      throw new Error("File not found: '" + x + "'"); // Changed to throw Error for better catch
     return Sk.builtinFiles["files"][x];
   }
 
@@ -152,8 +177,8 @@ export default function TurtleEditor() {
     setRunError(null);
     setIsRunning(true);
 
-    if (!skulptLoaded || !skulptStdLibLoaded || typeof Sk === 'undefined' || typeof Sk.TurtleGraphics === 'undefined') {
-        setRunError("Oops! The drawing tools aren't ready. Please refresh or wait.");
+    if (!skulptFullyInitialized) {
+        setRunError("Oops! The drawing tools are still warming up. Please wait a moment and try again.");
         setIsRunning(false);
         if (skulptPlaceholderText) skulptPlaceholderText.style.display = 'block';
         return;
@@ -163,56 +188,76 @@ export default function TurtleEditor() {
     let canvasWidth = 400;
     let canvasHeight = 400;
     if (canvasContainer) {
-        canvasWidth = canvasContainer.clientWidth;
-        canvasHeight = canvasContainer.clientHeight;
+        canvasWidth = canvasContainer.clientWidth > 0 ? canvasContainer.clientWidth : 400; // Ensure positive width
+        canvasHeight = canvasContainer.clientHeight > 0 ? canvasContainer.clientHeight : 400; // Ensure positive height
     }
     
-    Sk.configure({
-      output: (text: string) => {},
-      read: builtinRead,
-      __future__: Sk.python3,
-      debugging: true,
-      inputfunTakesPrompt: true,
-      TurtleGraphics: { target: 'skulpt-canvas-output', width: canvasWidth, height: canvasHeight },
-    });
-    
-    if (Sk.TurtleGraphics.reset) {
-        Sk.TurtleGraphics.reset(canvasWidth, canvasHeight);
-    } else if (Sk.tg) {
-        Sk.tg.canvasID = 'skulpt-canvas-output';
-        const canvas = document.getElementById(Sk.tg.canvasID);
-         if (canvas && canvas.firstChild && (canvas.firstChild as HTMLCanvasElement).getContext) {
-            const ctx = (canvas.firstChild as HTMLCanvasElement).getContext('2d');
-            ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
-            (canvas.firstChild as HTMLCanvasElement).width = canvasWidth;
-            (canvas.firstChild as HTMLCanvasElement).height = canvasHeight;
+    try {
+        Sk.configure({
+          output: (text: string) => { /* console.log(text) */ }, // Suppress console output from Skulpt print
+          read: builtinRead,
+          __future__: Sk.python3,
+          debugging: true, 
+          inputfunTakesPrompt: true,
+          TurtleGraphics: { target: 'skulpt-canvas-output', width: canvasWidth, height: canvasHeight },
+        });
+        
+        // Reset turtle graphics state
+        if (Sk.TurtleGraphics && Sk.TurtleGraphics.reset) {
+            Sk.TurtleGraphics.reset(canvasWidth, canvasHeight);
+        } else if (Sk.tg) { // Fallback for older Skulpt or different init
+            Sk.tg.canvasID = 'skulpt-canvas-output';
+            const canvasDOMElement = document.getElementById(Sk.tg.canvasID);
+            if (canvasDOMElement) {
+                // Clear previous canvas if any
+                while (canvasDOMElement.firstChild) {
+                    canvasDOMElement.removeChild(canvasDOMElement.firstChild);
+                }
+            }
+            Sk.tg.turtle_list = []; // Clear previous turtles
+            Sk.tg.WIDTH = canvasWidth;
+            Sk.tg.HEIGHT = canvasHeight;
+             // Re-initialize the canvas for Sk.tg explicitly if needed
+            if (Sk.tg.setup && typeof Sk.tg.setup === 'function') {
+                 Sk.tg.setup();
+            }
         }
-        Sk.tg.turtle_list = [];
-        Sk.tg.WIDTH = canvasWidth;
-        Sk.tg.HEIGHT = canvasHeight;
-    }
+    
+        // Ensure global turtle settings are updated
+        if (Sk.TurtleGraphics) {
+            Sk.TurtleGraphics.width = canvasWidth;
+            Sk.TurtleGraphics.height = canvasHeight;
+        } else if (Sk.tg) {
+            Sk.tg.WIDTH = canvasWidth;
+            Sk.tg.HEIGHT = canvasHeight;
+        }
 
-    (Sk.TurtleGraphics || (Sk.tg = {})).width = canvasWidth;
-    (Sk.TurtleGraphics || (Sk.tg = {})).height = canvasHeight;
+        const cleanedCode = code.replace(/turtle\.done\(\)|turtle\.Screen\(\)\.mainloop\(\)|screen\.mainloop\(\)/g, '# $& # Removed for browser execution');
 
-    const cleanedCode = code.replace(/turtle\.done\(\)|turtle\.Screen\(\)\.mainloop\(\)|screen\.mainloop\(\)/g, '# $& # Removed for browser execution');
-
-    Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, cleanedCode, true))
-    .then((mod: any) => {})
-    .catch((err: any) => {
-      let errorMsg = err.toString();
-      if (err.tp$name && err.args) {
-          errorMsg = `${err.tp$name}: ${err.args.v[0].v}`;
-          if (err.traceback && err.traceback.length > 0) {
-              const tb = err.traceback[0];
-              errorMsg += ` (line ${tb.lineno})`;
+        Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, cleanedCode, true))
+        .then((mod: any) => {})
+        .catch((err: any) => {
+          let errorMsg = err.toString();
+          if (err.tp$name && err.args && err.args.v && err.args.v[0] && err.args.v[0].v) {
+              errorMsg = `${err.tp$name}: ${err.args.v[0].v}`;
+              if (err.traceback && err.traceback.length > 0) {
+                  const tb = err.traceback[0];
+                  errorMsg += ` (line ${tb.lineno})`;
+              }
+          } else if (err.message) {
+            errorMsg = err.message;
           }
-      }
-      setRunError(`Brrr! Penguin code slip-up! ${errorMsg}. Check your code or ask Professor Penguino!`);
-      if (skulptPlaceholderText) skulptPlaceholderText.style.display = 'block'; 
-      if (skulptOutputDiv) skulptOutputDiv.innerHTML = `<div class="text-destructive p-4 text-center">${errorMsg}</div>`;
-    })
-    .finally(() => setIsRunning(false));
+          setRunError(`Brrr! Penguin code slip-up! ${errorMsg}. Check your code or ask Professor Penguino!`);
+          if (skulptPlaceholderText) skulptPlaceholderText.style.display = 'block'; 
+          if (skulptOutputDiv) skulptOutputDiv.innerHTML = `<div class="text-destructive p-4 text-center">${errorMsg}</div>`;
+        })
+        .finally(() => setIsRunning(false));
+    } catch (e: any) {
+        console.error("Skulpt configuration or execution error:", e);
+        setRunError(`A critical error occurred with the drawing tools: ${e.message || e.toString()}. Try refreshing.`);
+        setIsRunning(false);
+        if (skulptPlaceholderText) skulptPlaceholderText.style.display = 'block';
+    }
   };
 
   return (
@@ -238,7 +283,7 @@ export default function TurtleEditor() {
            <Button 
               type="button" 
               onClick={handleGetAISuggestion} 
-              disabled={isAiLoading || !skulptLoaded || !skulptStdLibLoaded}
+              disabled={isAiLoading || !skulptFullyInitialized}
               className="w-full text-xl py-4 kid-friendly-button bg-secondary text-secondary-foreground hover:bg-secondary/90"
             >
               {isAiLoading ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : <Wand2 className="mr-2 h-6 w-6" />}
@@ -298,7 +343,7 @@ export default function TurtleEditor() {
             <Button 
               type="button" 
               onClick={handleRunCode} 
-              disabled={isRunning || !skulptLoaded || !skulptStdLibLoaded}
+              disabled={isRunning || !skulptFullyInitialized}
               className="text-xl py-4 kid-friendly-button bg-green-500 hover:bg-green-600 text-white"
             >
               {isRunning ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : <Play className="mr-2 h-6 w-6" />}
@@ -329,8 +374,8 @@ export default function TurtleEditor() {
               Show Example Again
             </Button>
           </div>
-          {(!skulptLoaded || !skulptStdLibLoaded) && !isRunning && (
-            <Alert variant="default" className="mt-4 bg-blue-100 border-blue-300 text-blue-700">
+          {(!skulptFullyInitialized) && !isRunning && (
+            <Alert variant="default" className="mt-4 bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-900/50 dark:border-blue-700 dark:text-blue-300">
                 <Loader2 className="h-5 w-5 animate-spin mr-2 inline-block" />
                 <AlertDescription>Warming up the drawing tools... Please wait a moment!</AlertDescription>
             </Alert>
@@ -369,3 +414,4 @@ export default function TurtleEditor() {
     </>
   );
 }
+
