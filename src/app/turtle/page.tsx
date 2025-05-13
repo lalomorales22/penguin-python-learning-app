@@ -11,7 +11,7 @@ export default function TurtlePage() {
           Penguin Playground: Code Your Own Penguin Art!
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-          Let&apos;s be code artists! Write simple Python Turtle (or Penguin!) commands to make your penguin draw amazing pictures, colorful shapes, and cool icy patterns. Save your creations to Maximus&apos;s Igloo!
+          Let&apos;s be code artists! Write simple Python Turtle (or Penguin!) commands to make your penguin draw amazing pictures, colorful shapes, and cool icy patterns. Click &quot;Run My Penguin Code!&quot; to see your creation. Save your best work to Maximus&apos;s Igloo!
         </p>
       </header>
       <TurtleEditor />

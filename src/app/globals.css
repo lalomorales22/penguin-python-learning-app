@@ -178,3 +178,11 @@ textarea {
 .easy-selection-padding {
   @apply p-4 sm:p-5; /* Increased padding */
 }
+
+/* Styles for Skulpt Canvas */
+#skulpt-canvas-output {
+  @apply w-full h-full flex items-center justify-center;
+}
+#skulpt-canvas-output canvas {
+  @apply max-w-full max-h-full object-contain rounded-md; /* Ensure canvas is responsive and fits */
+}
