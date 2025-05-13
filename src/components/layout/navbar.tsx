@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, Lightbulb, UserCircle, Menu, Sprout, Turtle } from 'lucide-react'; // Added Sprout and Turtle
+import { Home, Lightbulb, UserCircle, Menu, Palette, Brain } from 'lucide-react'; // Using Palette for drawing, Brain for concepts
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -11,16 +11,16 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import React from 'react';
+import { PenguinIcon } from '@/components/icons/penguin-icon'; // New Penguin Icon
 
-// Placeholder for PythonSproutsLogo - replace with actual SVG or component
-const PythonSproutsLogo = () => <Sprout className="h-12 w-12 md:h-16 md:w-16 text-secondary drop-shadow-md" />;
+const PenguinPythonLogo = () => <PenguinIcon className="h-12 w-12 md:h-14 md:w-14 text-secondary drop-shadow-lg" />;
 
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/clarifier', label: 'Concept Clarifier', icon: Lightbulb },
-  { href: '/turtle', label: 'Turtle Showcase', icon: Turtle }, // Updated from Penguin Playground
-  { href: '/profile', label: "Learner's Space", icon: UserCircle }, // Updated from Maximus's Hub
+  { href: '/clarifier', label: 'Ask Prof. Penguino', icon: Brain },
+  { href: '/turtle', label: 'Penguin Playground', icon: Palette }, 
+  { href: '/profile', label: "Maximus's Igloo", icon: UserCircle },
 ];
 
 export default function Navbar() {
@@ -32,8 +32,8 @@ export default function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 md:h-24">
           <Link href="/" className="flex items-center space-x-2 text-primary-foreground hover:opacity-90 transition-opacity">
-            <PythonSproutsLogo />
-            <span className="text-3xl md:text-4xl font-extrabold tracking-tight">Python Sprouts</span>
+            <PenguinPythonLogo />
+            <span className="text-3xl md:text-4xl font-extrabold tracking-tight">Penguin Python</span>
           </Link>
           
           {/* Desktop Navigation */}

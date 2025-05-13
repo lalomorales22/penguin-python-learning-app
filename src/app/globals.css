@@ -4,99 +4,99 @@
 
 @layer base {
   :root {
-    /* Python Sprouts Theme - Light Mode */
-    --background: 204 60% 90%; /* Sky Blue (lighter for background) - HSL: 204, 60%, 90% from #87CEEB */
-    --foreground: 145 58% 30%; /* Darker Earthy Green for text - HSL: 145, 58%, 30% (derived from #3CB371) */
+    /* Penguin Python Theme - Light Mode */
+    --background: 200 100% 95%; /* Light Ice Blue */
+    --foreground: 220 25% 30%; /* Dark Slate Blue/Gray */
     
     --card: 0 0% 100%; /* White cards */
-    --card-foreground: 145 58% 30%; /* Darker Earthy Green on cards */
+    --card-foreground: 220 25% 30%; /* Dark Slate Blue/Gray on cards */
     
     --popover: 0 0% 100%;
-    --popover-foreground: 145 58% 30%;
+    --popover-foreground: 220 25% 30%;
     
-    --primary: 145 50% 47%; /* Earthy Green - HSL: 145, 50%, 47% from #3CB371 */
-    --primary-foreground: 0 0% 100%; /* White text on primary */
+    --primary: 195 80% 60%; /* Bright Icy Blue */
+    --primary-foreground: 220 20% 15%; /* Darker blue/black for contrast */
     
-    --secondary: 45 100% 70%; /* Sunflower Yellow - HSL: 45, 100%, 70% from #FFDA63 */
-    --secondary-foreground: 145 58% 25%; /* Dark Green on Yellow */
+    --secondary: 35 100% 60%; /* Sunny Orange/Yellow (like penguin beak/feet) */
+    --secondary-foreground: 220 30% 20%; /* Dark text on orange/yellow */
     
-    --muted: 204 60% 95%; /* Very light Sky Blue for muted backgrounds */
-    --muted-foreground: 204 40% 50%; /* Muted Sky Blue text */
+    --muted: 200 100% 97%; /* Very light Ice Blue for muted backgrounds */
+    --muted-foreground: 200 30% 55%; /* Muted Icy Blue text */
     
-    --accent: 157 51% 36%; /* Sea Green - HSL: 157, 51%, 36% from #2E8B57 */
+    --accent: 210 70% 55%; /* Medium Icy Blue */
     --accent-foreground: 0 0% 100%; /* White text on accent */
     
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 145 50% 75%; /* Lighter Earthy Green for borders */
-    --input: 204 60% 92%; /* Light Sky Blue for input backgrounds */
-    --ring: 157 51% 46%; /* Sea Green for focus ring (slightly lighter) */
+    --border: 195 80% 80%; /* Lighter Icy Blue for borders */
+    --input: 200 100% 92%; /* Light Ice Blue for input backgrounds */
+    --ring: 210 70% 65%; /* Medium Icy Blue for focus ring (slightly lighter) */
 
-    --chart-1: 145 50% 55%; /* Earthy Green variants */
-    --chart-2: 45 100% 75%; /* Sunflower Yellow variants */
-    --chart-3: 20 82% 57%;  /* Brick Orange - HSL: 20, 82%, 57% from #D2691E */
-    --chart-4: 204 60% 65%; /* Sky Blue variants */
-    --chart-5: 157 51% 40%; /* Sea Green variants */
+    --chart-1: 195 80% 65%; /* Icy Blue variants */
+    --chart-2: 35 100% 65%;  /* Sunny Orange/Yellow variants */
+    --chart-3: 20 82% 57%;   /* Brick Orange (can keep for variety) */
+    --chart-4: 210 70% 60%;  /* Medium Blue variants */
+    --chart-5: 220 40% 70%;  /* Light Slate Blue variants */
     
-    --radius: 0.8rem; /* Kid-friendly larger radius */
+    --radius: 0.9rem; /* Even more kid-friendly larger radius */
 
-    /* Sidebar theme (light) */
-    --sidebar-background: 145 50% 90%; /* Light Earthy Green */
-    --sidebar-foreground: 145 58% 25%; /* Dark Green text */
-    --sidebar-primary: 145 50% 47%;   /* Earthy Green */
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 157 51% 36%;    /* Sea Green */
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 145 50% 70%;
-    --sidebar-ring: 45 100% 70%;     /* Sunflower Yellow for ring */
+    /* Sidebar theme (light) - Penguin Style */
+    --sidebar-background: 195 70% 88%; /* Light Icy Blue */
+    --sidebar-foreground: 220 25% 25%; /* Dark Slate Blue text */
+    --sidebar-primary: 195 80% 60%;    /* Bright Icy Blue */
+    --sidebar-primary-foreground: 220 20% 15%;
+    --sidebar-accent: 35 100% 60%;     /* Sunny Orange */
+    --sidebar-accent-foreground: 220 30% 20%;
+    --sidebar-border: 195 80% 75%;
+    --sidebar-ring: 210 70% 55%;      /* Medium Icy Blue for ring */
   }
 
   .dark {
-    /* Python Sprouts Theme - Dark Mode (Adjusted for contrast and vibrancy) */
-    --background: 145 50% 15%; /* Dark Earthy Green/Forest Green */
-    --foreground: 204 60% 85%; /* Light Sky Blue text */
+    /* Penguin Python Theme - Dark Mode (Adjusted for contrast and vibrancy) */
+    --background: 220 30% 15%; /* Deep Dark Blue (Night Sky) */
+    --foreground: 200 100% 90%; /* Light Ice Blue text */
     
-    --card: 145 50% 20%; /* Slightly lighter dark green for cards */
-    --card-foreground: 204 60% 85%;
+    --card: 220 30% 20%; /* Slightly lighter dark blue for cards */
+    --card-foreground: 200 100% 90%;
     
-    --popover: 145 50% 20%;
-    --popover-foreground: 204 60% 85%;
+    --popover: 220 30% 20%;
+    --popover-foreground: 200 100% 90%;
     
-    --primary: 145 50% 55%; /* Brighter Earthy Green */
-    --primary-foreground: 0 0% 100%; /* White text */
+    --primary: 195 75% 65%; /* Brighter Icy Blue */
+    --primary-foreground: 220 20% 10%; 
     
-    --secondary: 45 100% 65%; /* Brighter Sunflower Yellow */
-    --secondary-foreground: 145 58% 15%; /* Very dark green on yellow */
+    --secondary: 35 100% 65%; /* Brighter Sunny Orange/Yellow */
+    --secondary-foreground: 220 30% 15%; /* Very dark blue on orange/yellow */
     
-    --muted: 145 50% 25%; /* Darker, muted green */
-    --muted-foreground: 204 60% 70%; /* Muted light blue text */
+    --muted: 220 30% 25%; /* Darker, muted blue */
+    --muted-foreground: 200 100% 80%; /* Muted light ice blue text */
     
-    --accent: 157 51% 45%; /* Brighter Sea Green */
+    --accent: 210 65% 60%; /* Brighter Medium Icy Blue */
     --accent-foreground: 0 0% 100%;
     
     --destructive: 0 72.2% 50.6%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 145 50% 35%; /* Darker Green border */
-    --input: 145 50% 22%;  /* Dark Green input background */
-    --ring: 157 51% 55%;   /* Brighter Sea Green for ring */
+    --border: 220 30% 35%; /* Darker Blue border */
+    --input: 220 30% 22%;  /* Dark Blue input background */
+    --ring: 210 65% 70%;   /* Brighter Medium Icy Blue for ring */
 
-    --chart-1: 145 50% 60%;
-    --chart-2: 45 100% 70%;
+    --chart-1: 195 75% 70%;
+    --chart-2: 35 100% 70%;
     --chart-3: 20 82% 62%;
-    --chart-4: 204 60% 70%;
-    --chart-5: 157 51% 50%;
+    --chart-4: 210 65% 65%;
+    --chart-5: 220 40% 75%;
 
-    /* Sidebar theme (dark) */
-    --sidebar-background: 145 50% 18%;
-    --sidebar-foreground: 204 60% 85%;
-    --sidebar-primary: 145 50% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 157 51% 45%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 145 50% 30%;
-    --sidebar-ring: 45 100% 65%;
+    /* Sidebar theme (dark) - Penguin Style */
+    --sidebar-background: 220 30% 18%;
+    --sidebar-foreground: 200 100% 90%;
+    --sidebar-primary: 195 75% 65%;
+    --sidebar-primary-foreground: 220 20% 10%;
+    --sidebar-accent: 35 100% 65%;
+    --sidebar-accent-foreground: 220 30% 15%;
+    --sidebar-border: 220 30% 30%;
+    --sidebar-ring: 210 65% 60%;
   }
 }
 
@@ -106,8 +106,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* Friendly, large font for improved readability */
-    font-size: 18px; /* Base font size for kids, adjust as needed */
+    /* Friendly, large font for improved readability for kids */
+    font-size: 19px; /* Base font size for kids, slightly increased */
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold; /* Ensure headings are bold */
@@ -121,66 +121,60 @@
   }
   /* Spacious layout with enough padding */
   .spacious-padding {
-    @apply p-4 md:p-6 lg:p-8;
+    @apply p-5 md:p-7 lg:p-10; /* Slightly increased padding */
   }
 }
 
-/* Additional playful styles for Python Sprouts */
+/* Additional playful styles for Penguin Python */
 @layer components {
   .kid-friendly-button {
-    @apply transform transition-transform duration-150 hover:scale-105 active:scale-95 rounded-full shadow-md;
-    /* Example of using a brighter color for buttons if not directly using theme colors */
-    /* @apply bg-yellow-400 hover:bg-yellow-500 text-green-800; */
+    @apply transform transition-transform duration-150 hover:scale-105 active:scale-95 rounded-full shadow-lg text-lg py-3 px-6;
   }
   .kid-friendly-card {
-    @apply transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 rounded-xl; /* More rounded corners */
+    @apply transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 rounded-2xl; /* More rounded corners and hover effect */
   }
-  .bright-icon { /* For playful icons */
-    @apply text-secondary; /* Example: Sunflower Yellow for icons */
+  .bright-icon { 
+    @apply text-secondary; 
   }
 }
 
 /* Animation for elements appearing */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fadeIn {
-  animation: fadeIn 0.5s ease-out forwards;
+  animation: fadeIn 0.6s ease-out forwards;
 }
 
-/* Fun animations for course/content transitions (placeholder) */
-@keyframes bounceIn {
-  0%, 20%, 40%, 60%, 80%, 100% {
-    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-  }
-  0% { opacity: 0; transform: scale3d(.3, .3, .3); }
-  20% { transform: scale3d(1.1, 1.1, 1.1); }
-  40% { transform: scale3d(.9, .9, .9); }
-  60% { opacity: 1; transform: scale3d(1.03, 1.03, 1.03); }
-  80% { transform: scale3d(.97, .97, .97); }
-  100% { opacity: 1; transform: scale3d(1, 1, 1); }
+/* Fun animations for course/content transitions (placeholder) - Penguin Waddle/Slide */
+@keyframes waddleIn {
+  0% { opacity: 0; transform: translateX(-20px) rotate(-5deg); }
+  60% { opacity: 1; transform: translateX(5px) rotate(3deg); }
+  100% { transform: translateX(0) rotate(0deg); }
 }
-.animate-bounceIn {
-  animation: bounceIn 1s ease-out;
+.animate-waddleIn {
+  animation: waddleIn 0.8s ease-out;
 }
+
 
 /* Larger text for better readability for kids */
 h1 { @apply text-4xl md:text-5xl lg:text-6xl; }
 h2 { @apply text-3xl md:text-4xl; }
 h3 { @apply text-2xl md:text-3xl; }
-p, li, span, div:not(h1,h2,h3,h4,h5,h6,button,input,label,a,pre,code) { @apply text-lg md:text-xl; }
-button, input, label, a { @apply text-lg; }
+p, li, span, div:not(h1,h2,h3,h4,h5,h6,button,input,label,a,pre,code) { @apply text-lg md:text-xl; } /* Maintain large base text */
+button, input[type="text"], input[type="email"], input[type="password"], label, a { @apply text-lg; } /* Ensure interactive elements are large */
+textarea { @apply text-base md:text-lg; } /* Textarea can be slightly smaller if needed for more content */
 
 /* Ensure inputs and textareas are also larger and kid-friendly */
 input[type="text"], 
 input[type="email"], 
 input[type="password"], 
 textarea {
-  @apply p-3 md:p-4 text-lg md:text-xl rounded-lg;
+  @apply p-4 md:p-5 text-lg md:text-xl rounded-xl; /* Increased padding and rounding */
 }
 
 /* Add more padding around elements for easy selection */
 .easy-selection-padding {
-  @apply p-3 sm:p-4;
+  @apply p-4 sm:p-5; /* Increased padding */
 }

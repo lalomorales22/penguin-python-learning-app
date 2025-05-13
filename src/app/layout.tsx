@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Python Sprouts: Grow Your Coding Skills!',
-  description: 'Welcome to Python Sprouts! Learn Python in a fun, colorful, and engaging way designed for young coders. Explore coding concepts, create turtle art, and watch your skills grow!',
+  title: 'Penguin Python: Code with Maximus The Kid!',
+  description: 'Welcome to Penguin Python! Join Maximus The Kid to learn Python in a fun, icy, and engaging way. Explore coding concepts, create penguin art, and watch your skills slide to success!',
 };
 
 export default function RootLayout({

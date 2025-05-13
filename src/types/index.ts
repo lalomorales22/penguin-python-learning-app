@@ -1,4 +1,4 @@
-export interface TurtleProject {
+export interface ArtProject { // Renamed from TurtleProject
   id: string;
   title: string;
   code: string;

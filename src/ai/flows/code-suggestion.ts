@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview An AI agent that suggests Python code snippets for Python Sprouts, focusing on Turtle graphics for young learners (ages 6-12).
+ * @fileOverview An AI agent that suggests Python code snippets for Penguin Python, focusing on Turtle graphics for young learners (ages 6-12), with a penguin theme.
  *
  * - suggestCode - A function that handles the code suggestion process.
  * - SuggestCodeInput - The input type for the suggestCode function.
@@ -11,13 +11,13 @@ import {ai} from '@/ai/genkit';
 import {z}from 'genkit';
 
 const SuggestCodeInputSchema = z.object({
-  task: z.string().describe('The drawing or coding task the student (age 6-12) is trying to achieve with Python Turtle (e.g., "draw a red flower", "make the turtle spin").'),
+  task: z.string().describe('The drawing or coding task the student (age 6-12) is trying to achieve with Python Turtle, focusing on penguins or icy scenes (e.g., "draw a blue penguin", "make the penguin slide", "draw a snowflake").'),
 });
 export type SuggestCodeInput = z.infer<typeof SuggestCodeInputSchema>;
 
 const SuggestCodeOutputSchema = z.object({
-  codeSnippet: z.string().describe('A very simple Python Turtle code snippet (2-6 lines) that helps achieve the task, suitable for kids ages 6-12. Include `import turtle` and `turtle.done()` if appropriate for a complete, runnable small example.'),
-  explanation: z.string().describe('A super child-friendly (ages 6-12) explanation of what the Python Turtle code does. Use simple words, fun analogies, and lots of encouragement. Explain how to try the code and see the turtle draw!'),
+  codeSnippet: z.string().describe('A very simple Python Turtle code snippet (3-7 lines) that helps achieve the task, suitable for kids ages 6-12. Include `import turtle` and `turtle.done()` if appropriate for a complete, runnable small example. Should be penguin or ice/snow themed.'),
+  explanation: z.string().describe('A super child-friendly (ages 6-12) explanation of what the Python Turtle code does, with a fun penguin theme. Use simple words, analogies about penguins, snow, or ice, and lots of encouragement. Explain how to try the code and see the penguin draw!'),
 });
 export type SuggestCodeOutput = z.infer<typeof SuggestCodeOutputSchema>;
 
@@ -26,29 +26,29 @@ export async function suggestCode(input: SuggestCodeInput): Promise<SuggestCodeO
 }
 
 const prompt = ai.definePrompt({
-  name: 'codeSuggestionPromptSprouts',
+  name: 'codeSuggestionPromptPenguin',
   input: {schema: SuggestCodeInputSchema},
   output: {schema: SuggestCodeOutputSchema},
-  prompt: `You are Sprout, a friendly and super helpful coding buddy for Python Sprouts! You're helping kids (ages 6-12) learn Python by drawing with the 'turtle' library. Your job is to give them very simple and fun Python Turtle code snippets.
+  prompt: `You are Captain Pengu, a super brave and helpful coding penguin for Penguin Python! You're helping kids (ages 6-12) learn Python by drawing with the 'turtle' library, making cool penguin pictures and icy scenes. Your job is to give them very simple and fun Python Turtle code snippets.
 
 IMPORTANT GUIDELINES:
 - ALWAYS use the 'turtle' library for drawing tasks.
-- Keep the code snippet VERY short, ideally 2-6 lines. If it's a complete small example, include \`import turtle\` and \`turtle.done()\` (or \`screen.mainloop()\` if you use \`screen = turtle.Screen()\`).
-- Use extremely simple words and short sentences in your explanation.
-- Be super encouraging and enthusiastic! Tell them they're doing a great job!
-- Think like you're talking to a 7-year-old.
-- Explain what each part of the code does in a fun way (e.g., "This line tells your turtle to take a big step forward!").
-- Tell them to try the code and see what their turtle draws!
-- Focus on tasks related to drawing shapes, using colors, or making the turtle move in simple ways.
+- Keep the code snippet VERY short, ideally 3-7 lines. If it's a complete small example, include \`import turtle\` and \`turtle.done()\` (or \`screen.mainloop()\` if you use \`screen = turtle.Screen()\`).
+- Use extremely simple words and short sentences in your explanation. Think like you're talking to a 6-year-old!
+- Be super encouraging and enthusiastic! "You're a Pawesome Coder!", "Waddle on, that's great!".
+- Explain what each part of the code does in a fun, penguin-themed way (e.g., "This line tells your turtle to slide forward on the ice!").
+- Tell them to try the code and see what their penguin draws!
+- Focus on tasks related to drawing penguins, snowflakes, igloos, or making the turtle move in simple, fun ways.
+- If they ask for something complex, simplify it to a very basic version suitable for a 6-12 year old first-time coder.
 
 The young coder wants to: {{{task}}}
 
-Let's help them grow their coding skills! You can do it, little sprout!`,
+Let's help them on their coding expedition! You can do it, little penguin chick! Brrr-illiant!`,
 });
 
 const suggestCodeFlow = ai.defineFlow(
   {
-    name: 'codeSuggestionFlowSprouts',
+    name: 'codeSuggestionFlowPenguin',
     inputSchema: SuggestCodeInputSchema,
     outputSchema: SuggestCodeOutputSchema,
   },
@@ -56,9 +56,7 @@ const suggestCodeFlow = ai.defineFlow(
     const {output} = await prompt(input);
     // Ensure the code is formatted as a Python block if it's not already
     if (output && output.codeSnippet && !output.codeSnippet.trim().startsWith("```python")) {
-        // Heuristic: if it's multiline and doesn't have backticks, add them.
-        // Simple single lines might not need them if the LLM is consistent.
-        if (output.codeSnippet.includes('\n')) {
+        if (output.codeSnippet.includes('\n') || !output.codeSnippet.trim().startsWith("import turtle")) { // Add backticks if multiline or seems like a snippet
              output.codeSnippet = "```python\n" + output.codeSnippet.trim() + "\n```";
         }
     }

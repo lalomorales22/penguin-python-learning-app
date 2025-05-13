@@ -5,9 +5,10 @@ import { conceptClarifier } from '@/ai/flows/concept-clarifier';
 import type { ConceptClarifierOutput } from '@/ai/flows/concept-clarifier';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, Sparkles, Brain, MessageSquareQuestion, FileText, Lightbulb } from 'lucide-react'; // Added Brain, FileText, MessageSquareQuestion
+import { Loader2, Sparkles, Brain, MessageSquareQuote, FileText, Lightbulb } from 'lucide-react'; // Changed MessageSquareQuestion to MessageSquareQuote
+import { PenguinIcon } from '@/components/icons/penguin-icon';
 
 export default function ClarifierForm() {
   const [concept, setConcept] = useState('');
@@ -18,7 +19,7 @@ export default function ClarifierForm() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!concept.trim()) {
-      setError('Oops! Please type in a Python word you want to know more about.');
+      setError('Oops! Please type in a chilly Python word you want to know more about.');
       return;
     }
     setIsLoading(true);
@@ -30,7 +31,7 @@ export default function ClarifierForm() {
       setResult(aiResponse);
     } catch (e) {
       console.error(e);
-      setError('Uh oh! My AI brain had a little hiccup. Can you try asking again, please?');
+      setError('Uh oh! Professor Penguino\'s AI brain had a little snowball fight. Can you try asking again, please?');
     } finally {
       setIsLoading(false);
     }
@@ -41,8 +42,8 @@ export default function ClarifierForm() {
       <form onSubmit={handleSubmit} className="space-y-6 p-6 bg-card rounded-xl shadow-xl kid-friendly-card">
         <div>
           <label htmlFor="concept-input" className="block text-xl font-medium text-foreground mb-3 flex items-center">
-            <MessageSquareQuestion className="mr-2 h-7 w-7 text-secondary" />
-            What Python word are you curious about?
+            <MessageSquareQuote className="mr-2 h-7 w-7 text-secondary" /> {/* Changed MessageSquareQuestion to MessageSquareQuote */}
+            What chilly Python word are you curious about?
           </label>
           <Input
             id="concept-input"
@@ -58,12 +59,12 @@ export default function ClarifierForm() {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-              Thinking...
+              Professor Penguino is thinking...
             </>
           ) : (
             <>
               <Brain className="mr-2 h-6 w-6" />
-              Explain It To Me!
+              Explain It, Professor!
             </>
           )}
         </Button>
@@ -71,8 +72,8 @@ export default function ClarifierForm() {
 
       {error && (
         <Alert variant="destructive" id="error-message" className="rounded-lg shadow-md p-5">
-          <Lightbulb className="h-6 w-6" />
-          <AlertTitle className="text-xl font-bold">Oopsie!</AlertTitle>
+          <PenguinIcon className="h-6 w-6" /> {/* Using PenguinIcon */}
+          <AlertTitle className="text-xl font-bold">Brrr! An Error!</AlertTitle>
           <AlertDescription className="text-lg">{error}</AlertDescription>
         </Alert>
       )}
@@ -82,7 +83,7 @@ export default function ClarifierForm() {
           <CardHeader className="bg-primary/10 rounded-t-xl p-6">
             <CardTitle className="text-3xl font-bold text-primary flex items-center">
               <Sparkles className="mr-3 h-8 w-8 text-secondary animate-pulse" />
-              All about &quot;{concept}&quot;!
+              Professor Penguino on &quot;{concept}&quot;!
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-8 p-6">
