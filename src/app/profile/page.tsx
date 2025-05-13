@@ -3,7 +3,7 @@
 import { usePortfolio } from '@/contexts/portfolio-context';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { UserCircle, Edit3, Trash2, BookOpen, Settings, Star, Palette, Snowflake } from 'lucide-react';
+import { UserCircle, Edit3, Trash2, BookOpen, Settings, Star, Palette, Snowflake, Loader2 } from 'lucide-react';
 import { PenguinIcon } from '@/components/icons/penguin-icon';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 
 export default function ProfilePage() {
-  const { projects, removeProject } = usePortfolio();
+  const { projects, removeProject, isLoading } = usePortfolio(); // Added isLoading
   const { toast } = useToast();
 
   const handleDeleteProject = (id: string, title: string) => {
@@ -24,6 +24,15 @@ export default function ProfilePage() {
     });
   };
   
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-10 px-4 flex flex-col items-center justify-center min-h-[calc(100vh-200px)] spacious-padding">
+        <Loader2 className="h-16 w-16 md:h-20 md:w-20 text-primary animate-spin mb-6" />
+        <p className="text-2xl md:text-3xl text-muted-foreground">Maximus is finding his awesome projects...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto py-8 px-4 space-y-12 spacious-padding">
       <header className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 pb-8 border-b-2 border-primary/20">
@@ -72,7 +81,7 @@ export default function ProfilePage() {
                 <CardHeader className="easy-selection-padding">
                   <CardTitle className="text-2xl font-semibold text-primary truncate">{project.title}</CardTitle>
                   <CardDescription className="text-md">
-                    Created on: {format(new Date(project.createdAt), 'MMMM d, yyyy')}
+                    Created on: {project.createdAt ? format(new Date(project.createdAt), 'MMMM d, yyyy') : 'Date unknown'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow space-y-3 easy-selection-padding">
