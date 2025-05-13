@@ -66,12 +66,12 @@ export default function TurtleEditor() {
 
     if (skulptLoaded && skulptStdLibLoaded) {
       let attempts = 0;
-      const maxAttempts = 100; // Increased attempts: Try for 10 seconds (100 * 100ms)
+      const maxAttempts = 100; // Try for 10 seconds (100 * 100ms)
       const checkSkulptAvailability = () => {
         attempts++;
         if (
           typeof Sk !== 'undefined' &&
-          Sk.TurtleGraphics &&
+          (Sk.TurtleGraphics || Sk.tg) && // Check for Sk.TurtleGraphics OR Sk.tg
           Sk.builtinFiles && 
           Sk.misceval &&
           Sk.importMainWithBody
